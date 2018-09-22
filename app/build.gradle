@@ -30,6 +30,7 @@ ext {
     vk = '1.6.5'
     osm = '6.0.2'
     osm_bonus_pack = '6.5.2'
+    glide = '3.7.0'
 }
 
 repositories {
@@ -70,4 +71,6 @@ dependencies {
 
     implementation "org.osmdroid:osmdroid-android:$osm"
 //    implementation "com.github.MKergall:osmbonuspack:$osm_bonus_pack"
+
+    implementation "com.github.bumptech.glide:glide:$glide"
 }

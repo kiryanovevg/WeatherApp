@@ -3,6 +3,7 @@ package com.kiryanov.weatherapp.di.modules;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kiryanov.weatherapp.utils.ApiKeyInterceptor;
 import com.kiryanov.weatherapp.data.Api;
 
 import java.util.concurrent.TimeUnit;
@@ -25,9 +26,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
 
     private String baseUrl;
+    private String apiKey;
 
-    public NetworkModule(String baseUrl) {
+    public NetworkModule(String baseUrl, String apiKey) {
         this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
     }
 
     @Provides
@@ -60,6 +63,7 @@ public class NetworkModule {
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient().newBuilder();
         clientBuilder.addInterceptor(logging);
+        clientBuilder.addInterceptor(new ApiKeyInterceptor(apiKey));
         clientBuilder.connectTimeout(10, TimeUnit.SECONDS);
         clientBuilder.readTimeout(0, TimeUnit.SECONDS);
         return clientBuilder.build();

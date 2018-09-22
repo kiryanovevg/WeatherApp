@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kiryanov.weatherapp.MainActivity">
+    tools:context="com.kiryanov.weatherapp.mvp.MainScreen.MainActivity">
 
-    <com.kiryanov.weatherapp.MyMapView
+    <com.kiryanov.weatherapp.map.MyMapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
