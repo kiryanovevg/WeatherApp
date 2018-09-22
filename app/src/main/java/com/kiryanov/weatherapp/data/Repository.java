@@ -1,4 +1,4 @@
-package com.kiryanov.weatherapp;
+package com.kiryanov.weatherapp.data;
 
 import dagger.Module;
 
