@@ -31,7 +31,7 @@ public class MainPresenter extends BasePresenter<MainView> {
     }
 
     private void load() {
-        repository.getWeatherByCity("Salsk")
+        repository.getWeatherByCity("Krasnodar")
                 .subscribe(new SingleObserver<City>() {
                     @Override
                     public void onSubscribe(Disposable d) {

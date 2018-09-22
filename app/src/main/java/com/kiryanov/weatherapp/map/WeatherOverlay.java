@@ -83,7 +83,7 @@ public class WeatherOverlay extends Overlay {
                     );
 
                     double temp = city.getMain().getTemp();
-                    String sTemp = String.format("%.1f", temp);
+                    String sTemp = String.format("%.0f", temp);
                     sTemp = temp > 0 ? "+" + sTemp : "" + sTemp;
 
                     canvas.drawText(
