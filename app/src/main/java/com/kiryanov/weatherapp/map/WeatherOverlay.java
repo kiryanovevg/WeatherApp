@@ -28,6 +28,7 @@ import java.util.List;
 public class WeatherOverlay extends Overlay {
 
     private List<City> cities = new ArrayList<>();
+    private OnMapItemClickListener listener;
 
     @Override
     public void draw(Canvas canvas, MapView mapView, boolean shadow) {
@@ -53,12 +54,12 @@ public class WeatherOverlay extends Overlay {
                         geoPoint
                 );
 
-                Bitmap icon = city.getWeather().get(0).getBitmap();
+                Bitmap icon = city.getWeather().get(0).getImage();
                 if (icon != null) {
                     canvas.drawBitmap(
                             icon,
-                            point.x,
-                            point.y,
+                            point.x - icon.getWidth() / 2,
+                            point.y - icon.getHeight() / 2,
                             null
                     );
 
@@ -77,8 +78,8 @@ public class WeatherOverlay extends Overlay {
 
                     canvas.drawText(
                             cityName,
-                            point.x,
-                            point.y + icon.getHeight(),
+                            point.x - icon.getWidth() / 2,
+                            point.y + icon.getHeight() / 2,
                             textPaint
                     );
 
@@ -88,8 +89,8 @@ public class WeatherOverlay extends Overlay {
 
                     canvas.drawText(
                             sTemp,
-                            point.x + textWidth + 8*density,
-                            point.y + icon.getHeight(),
+                            point.x + textWidth + 8*density - icon.getWidth() / 2,
+                            point.y + icon.getHeight() / 2,
                             textPaint
                     );
                 } else {
@@ -104,7 +105,9 @@ public class WeatherOverlay extends Overlay {
         int closet = findClosetPoint(event, mapView);
 
         if (closet != -1) {
-            Log.d("Overlay", "onSingleTapConfirmed: " + cities.get(closet));
+            City city = cities.get(closet);
+            if (listener != null) listener.onMapItemClick(city);
+            Log.d("Overlay", "onSingleTapConfirmed: " + city);
         } else {
             Log.d("Overlay", "onSingleTapConfirmed: not found)");
         }
@@ -120,8 +123,8 @@ public class WeatherOverlay extends Overlay {
 //        int width = styler.getClusterImage().getWidth() + 10;
 //        int height = styler.getClusterImage().getHeight() + 10;
 
-        int width = 20;
-        int height = 20;
+        int width = 30;
+        int height = 30;
 
         for (int i = 0; i < cities.size(); i++) {
             if (cities.get(i) == null) continue;
@@ -160,5 +163,9 @@ public class WeatherOverlay extends Overlay {
 
     public void clear() {
         cities.clear();
+    }
+
+    public void setListener(OnMapItemClickListener listener) {
+        this.listener = listener;
     }
 }

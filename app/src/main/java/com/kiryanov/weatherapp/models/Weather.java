@@ -20,7 +20,6 @@ public class Weather {
     private String icon;
 
     private Bitmap image;
-    private boolean loading;
 
     public String getDescription() {
         return description;
@@ -38,54 +37,11 @@ public class Weather {
         this.icon = icon;
     }
 
-    public Bitmap getBitmap() {
-        if (!loading) {
-            String url = String.format(
-                    BaseApplication.getContext().getString(R.string.image_url),
-                    icon
-            );
-
-            double density = BaseApplication.getDensity();
-
-            final int photoSizeInDp = 80;
-            final int photoSizeInPx = ((int) (photoSizeInDp * density));
-
-            Glide.with(BaseApplication.getContext())
-                    .load(url)
-                    .asBitmap()
-                    .into(new SimpleTarget<Bitmap>(photoSizeInPx, photoSizeInPx) {
-
-                        @Override
-                        public void onResourceReady(Bitmap bitmap,
-                                                    GlideAnimation<? super Bitmap> glideAnimation) {
-
-                            if (bitmap != null) {
-                                image = Bitmap.createScaledBitmap(
-                                        bitmap,
-                                        photoSizeInPx,
-                                        photoSizeInPx *
-                                                bitmap.getHeight() / bitmap.getWidth(),
-                                        false
-                                );
-                            }
-
-                        }
-
-                        @Override
-                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                            if (errorDrawable != null) {
-                                super.onLoadFailed(e, errorDrawable);
-
-                                if (errorDrawable instanceof BitmapDrawable) {
-                                    image = ((BitmapDrawable) errorDrawable).getBitmap();
-                                }
-                                loading = false;
-                            }
-                        }
-                    });
-            loading = true;
-        }
-
+    public Bitmap getImage() {
         return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }

@@ -4,10 +4,18 @@ import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
 
+import com.kiryanov.weatherapp.BaseApplication;
+import com.kiryanov.weatherapp.data.Repository;
+
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+
+import javax.inject.Inject;
 
 /**
  * Created by Evgeniy on 22.09.18.
@@ -15,12 +23,16 @@ import org.osmdroid.views.MapView;
 
 public class MyMapView extends MapView {
 
-    private static double MIN_ZOOM = 7d;
+    @Inject
+    Repository repository;
+
+    public static double MIN_ZOOM = 7d;
 
     public WeatherOverlay weatherOverlay;
 
     public MyMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        BaseApplication.getAppComponent().inject(this);
 
         initMap();
         initOverlays();
@@ -31,8 +43,22 @@ public class MyMapView extends MapView {
         setMultiTouchControls(true);
 
         setMinZoomLevel(MIN_ZOOM);
-        getController().setZoom(MIN_ZOOM);
-        getController().setCenter(new GeoPoint(47.7, 47.1));
+        getController().setZoom(repository.mapSettings.getZoom());
+        getController().setCenter(repository.mapSettings.getCenter());
+
+        addMapListener(new MapListener() {
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                repository.mapSettings.setCenter(getMapCenter());
+                return false;
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                repository.mapSettings.setZoom(getZoomLevelDouble());
+                return false;
+            }
+        });
     }
 
     private void initOverlays() {
