@@ -1,21 +1,20 @@
 package com.kiryanov.weatherapp.data;
 
-import android.graphics.Bitmap;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.kiryanov.weatherapp.BaseApplication;
-import com.kiryanov.weatherapp.R;
-import com.kiryanov.weatherapp.models.City;
+import com.kiryanov.weatherapp.models.minInfo.City;
+import com.kiryanov.weatherapp.models.minInfo.Weather;
+import com.kiryanov.weatherapp.models.moreInfo.WeatherInfo;
+import com.kiryanov.weatherapp.utils.Utils;
 
 import org.osmdroid.util.BoundingBox;
 
 import java.util.List;
 
 import dagger.Module;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -27,11 +26,19 @@ import io.reactivex.schedulers.Schedulers;
 @Module
 public class Repository {
 
-    private Api api;
     public MapSettings mapSettings = new MapSettings();
+
+    private Api api;
+    private AppDatabase db;
 
     public Repository(Api api) {
         this.api = api;
+
+        db = Room.databaseBuilder(
+                    BaseApplication.getContext(),
+                    AppDatabase.class,
+                    "database")
+                .build();
     }
 
     public Single<JsonArray> getWeatherByBoundingBox(BoundingBox boundingBox, int zoomLevel) {
@@ -55,37 +62,60 @@ public class Repository {
     }
 
     public Observable<City> getWeatherByCity(List<String> cities) {
-        return Observable.fromIterable(cities)
+        return Observable
+                .fromIterable(cities)
                 .flatMap(city -> api.getWeatherByCity(city))
                 .map(city -> {
-                    int size = 50;
+                    Weather weather = city.getWeather().get(0);
+                    weather.setImage(Utils.downloadWeatherIcon(weather.getIcon()));
 
-                    final int photoSizeInDp = 80;
-                    final int photoSizeInPx = ((int) (photoSizeInDp * BaseApplication.getDensity()));
-
-                    String url = String.format(
-                            BaseApplication.getContext().getString(R.string.image_url),
-                            city.getWeather().get(0).getIcon()
-                    );
-
-                    Bitmap image = Glide.with(BaseApplication.getContext())
-                            .load(url)
-                            .asBitmap()
-                            .into(size, size)
-                            .get();
-
-                    image = Bitmap.createScaledBitmap(
-                            image,
-                            photoSizeInPx,
-                            photoSizeInPx *
-                                    image.getHeight() / image.getWidth(),
-                            false
-                    );
-
-                    city.getWeather().get(0).setImage(image);
+                    if (db.cityDAO().getByName(city.getName()) == null) {
+                        db.cityDAO().insert(city);
+                    } else {
+                        db.cityDAO().update(city);
+                    }
 
                     return city;
                 })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Flowable<City> getLocalWeather() {
+        return Flowable.fromCallable(() -> db.cityDAO().getAll())
+                .flatMap(Flowable::fromIterable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<WeatherInfo> getCityWeatherInfo(String cityName) {
+        return api.getCityWeatherInfo(cityName)
+                .map(weatherWrapper -> {
+                    for (WeatherInfo info : weatherWrapper.getList()) {
+                        Weather weather = info.getWeather().get(0);
+                        weather.setImage(Utils.downloadWeatherIcon(weather.getIcon()));
+                    }
+
+                    return weatherWrapper;
+                })
+                .flatMap(weatherWrapper -> Observable.fromIterable(weatherWrapper.getList()))
+                /*.filter(weatherInfo -> {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date(weatherInfo.getDt() * 1000));
+
+                    boolean day = calendar.get(Calendar.DAY_OF_MONTH) ==
+                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
+                    Calendar now = Calendar.getInstance();
+                    now.add(Calendar.DAY_OF_MONTH, 1);
+
+                    int hour = Calendar.getInstance().get(Calendar.HOUR);
+
+                    boolean time = hour >= 21 &&
+                            calendar.get(Calendar.DAY_OF_MONTH) == now.get(Calendar.DAY_OF_MONTH);
+
+                    return day || time;
+                })*/
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

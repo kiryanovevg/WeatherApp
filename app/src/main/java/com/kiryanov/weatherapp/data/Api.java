@@ -2,7 +2,8 @@ package com.kiryanov.weatherapp.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.kiryanov.weatherapp.models.City;
+import com.kiryanov.weatherapp.models.minInfo.City;
+import com.kiryanov.weatherapp.models.moreInfo.WeatherWrapper;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -21,4 +22,7 @@ public interface Api {
 //    bounding box [lon-left,lat-bottom,lon-right,lat-top,zoom]
     @GET("box/city")
     Single<JsonArray> getWeatherByBoundingBox(@Query("bbox") String bbox);
+
+    @GET("forecast")
+    Observable<WeatherWrapper> getCityWeatherInfo(@Query("q") String city);
 }

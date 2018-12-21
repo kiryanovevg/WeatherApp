@@ -1,4 +1,4 @@
-package com.kiryanov.weatherapp.models;
+package com.kiryanov.weatherapp.models.minInfo;
 
 /**
  * Created by Evgeniy on 22.09.18.

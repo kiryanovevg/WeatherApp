@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.kiryanov.weatherapp.BaseApplication;
-import com.kiryanov.weatherapp.models.City;
-import com.kiryanov.weatherapp.models.Coordinate;
+import com.kiryanov.weatherapp.models.minInfo.City;
+import com.kiryanov.weatherapp.models.minInfo.Coordinate;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -83,12 +83,8 @@ public class WeatherOverlay extends Overlay {
                             textPaint
                     );
 
-                    double temp = city.getMain().getTemp();
-                    String sTemp = String.format("%.0f", temp);
-                    sTemp = temp > 0 ? "+" + sTemp : "" + sTemp;
-
                     canvas.drawText(
-                            sTemp,
+                            city.getMain().getStringTemp(),
                             point.x + textWidth + 8*density - icon.getWidth() / 2,
                             point.y + icon.getHeight() / 2,
                             textPaint

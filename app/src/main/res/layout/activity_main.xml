@@ -15,7 +15,8 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="btn"/>
+        android:text="btn"
+        android:visibility="gone"/>
 
     <include layout="@layout/bottom_sheet_city_info" />
 
