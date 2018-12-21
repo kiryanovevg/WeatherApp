@@ -51,6 +51,18 @@ public class Utils {
         imageView.setImageBitmap(bitmap);
     }
 
+    @BindingAdapter("weather_icon_url")
+    public static void setWeatherIconFromUrl(ImageView imageView, String iconId) {
+        String url = String.format(
+                BaseApplication.getContext().getString(R.string.image_url),
+                iconId
+        );
+
+        Glide.with(imageView.getContext())
+                .load(url)
+                .into(imageView);
+    }
+
     @BindingAdapter("time")
     public static void setTime(TextView textView, long dt) {
         Date date = new Date(dt * 1000);

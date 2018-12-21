@@ -12,13 +12,13 @@ public class Temperature {
         return temp;
     }
 
-    public double getTempInCelsius() {
+    private double getTempInCelsius() {
         return temp - 273.15;
     }
 
     public String getStringTemp() {
-        String sTemp = String.format("%.0f", getTempInCelsius());
-        sTemp = getTempInCelsius() > 0 ? "+" + sTemp : "" + sTemp;
+        int tempInCelsius = ((int) getTempInCelsius());
+        String sTemp = tempInCelsius > 0 ? "+" + tempInCelsius : "" + tempInCelsius;
 
         return sTemp;
     }

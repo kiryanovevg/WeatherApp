@@ -31,4 +31,6 @@ interface MainView extends MvpView {
     void showCityWeather(List<WeatherInfo> list);
 
     void setInfoLoadingProgressVisibility(boolean visibility);
+
+    void setCityLoadingProgressVisibility(boolean visibility);
 }

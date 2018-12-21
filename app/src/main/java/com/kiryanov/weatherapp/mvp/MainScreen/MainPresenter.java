@@ -45,8 +45,7 @@ public class MainPresenter extends BasePresenter<MainView> {
         super.onFirstViewAttach();
         BaseApplication.getAppComponent().inject(this);
 
-//        loadWeather();
-        getLocalWeather();
+        loadWeather();
     }
 
     @Override
@@ -74,6 +73,7 @@ public class MainPresenter extends BasePresenter<MainView> {
                     @Override
                     public void onSubscribe(Disposable d) {
                         unsubscribeOnDestroy(d);
+                        getViewState().setCityLoadingProgressVisibility(true);
                     }
 
                     @Override
@@ -83,59 +83,15 @@ public class MainPresenter extends BasePresenter<MainView> {
 
                     @Override
                     public void onError(Throwable e) {
+                        getViewState().setCityLoadingProgressVisibility(false);
                         getViewState().showMessage(e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
+                        getViewState().setCityLoadingProgressVisibility(false);
                     }
                 });
-    }
-
-    private void getLocalWeather() {
-        repository.getLocalWeather()
-                .subscribe(new FlowableSubscriber<City>() {
-                    @Override
-                    public void onSubscribe(Subscription s) {
-
-                    }
-
-                    @Override
-                    public void onNext(City city) {
-                        getViewState().showOnMap(city);
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-                /*.subscribe(new Observer<City>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        unsubscribeOnDestroy(d);
-                    }
-
-                    @Override
-                    public void onNext(City city) {
-                        getViewState().showOnMap(city);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        getViewState().showMessage(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });*/
     }
 
     private void uploadCityInfo() {

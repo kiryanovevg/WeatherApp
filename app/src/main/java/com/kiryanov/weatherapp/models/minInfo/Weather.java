@@ -1,6 +1,5 @@
 package com.kiryanov.weatherapp.models.minInfo;
 
-import android.arch.persistence.room.Ignore;
 import android.graphics.Bitmap;
 
 /**
@@ -12,7 +11,6 @@ public class Weather {
     private String description;
     private String icon;
 
-    @Ignore
     private Bitmap image;
 
     public String getDescription() {

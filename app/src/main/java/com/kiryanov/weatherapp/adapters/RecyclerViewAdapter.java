@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.databinding.library.baseAdapters.BR;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,16 +25,16 @@ public class RecyclerViewAdapter<T, P> extends RecyclerView.Adapter<RecyclerView
         itemList = new ArrayList<>();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ViewDataBinding binding;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
         }
 
-        public ViewDataBinding getBinding() {
+        private ViewDataBinding getBinding() {
             return binding;
         }
 
@@ -51,9 +53,9 @@ public class RecyclerViewAdapter<T, P> extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
         final T item = itemList.get(position);
 
-//        holder.getBinding().setVariable(BR.item, item);
-//        holder.getBinding().setVariable(BR.presenter, presenter);
-//        holder.getBinding().executePendingBindings();
+        holder.getBinding().setVariable(BR.item, item);
+        holder.getBinding().setVariable(BR.presenter, presenter);
+        holder.getBinding().executePendingBindings();
     }
     @Override
     public int getItemCount() {

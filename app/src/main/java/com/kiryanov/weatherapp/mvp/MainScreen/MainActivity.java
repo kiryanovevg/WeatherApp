@@ -7,6 +7,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -37,6 +38,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, OnMa
 
     private BottomSheetCityInfoBinding cityInfoBinding;
 
+    private ProgressBar progressBar;
     private MyMapView mapView;
     private Button button;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -50,6 +52,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, OnMa
 
         mapView = findViewById(R.id.map_view);
         button = findViewById(R.id.btn);
+        progressBar = findViewById(R.id.progress_bar_main);
 
         mapView.weatherOverlay.setListener(this);
 
@@ -100,15 +103,20 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, OnMa
 
     @Override
     public void showCityWeather(List<WeatherInfo> list) {
+        cityInfoBinding.rv.scrollToPosition(0);
         adapter.clear();
         adapter.addAll(list);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void setInfoLoadingProgressVisibility(boolean visibility) {
         cityInfoBinding.progress.setVisibility(visibility ? View.VISIBLE : View.GONE);
         cityInfoBinding.rv.setVisibility(visibility ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    @Override
+    public void setCityLoadingProgressVisibility(boolean visibility) {
+        progressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
     @Override

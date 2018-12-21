@@ -1,6 +1,5 @@
 package com.kiryanov.weatherapp.data;
 
-
 import com.google.gson.JsonArray;
 import com.kiryanov.weatherapp.BaseApplication;
 import com.kiryanov.weatherapp.models.minInfo.City;
@@ -29,16 +28,9 @@ public class Repository {
     public MapSettings mapSettings = new MapSettings();
 
     private Api api;
-    private AppDatabase db;
 
     public Repository(Api api) {
         this.api = api;
-
-        db = Room.databaseBuilder(
-                    BaseApplication.getContext(),
-                    AppDatabase.class,
-                    "database")
-                .build();
     }
 
     public Single<JsonArray> getWeatherByBoundingBox(BoundingBox boundingBox, int zoomLevel) {
@@ -69,21 +61,8 @@ public class Repository {
                     Weather weather = city.getWeather().get(0);
                     weather.setImage(Utils.downloadWeatherIcon(weather.getIcon()));
 
-                    if (db.cityDAO().getByName(city.getName()) == null) {
-                        db.cityDAO().insert(city);
-                    } else {
-                        db.cityDAO().update(city);
-                    }
-
                     return city;
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Flowable<City> getLocalWeather() {
-        return Flowable.fromCallable(() -> db.cityDAO().getAll())
-                .flatMap(Flowable::fromIterable)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -93,7 +72,7 @@ public class Repository {
                 .map(weatherWrapper -> {
                     for (WeatherInfo info : weatherWrapper.getList()) {
                         Weather weather = info.getWeather().get(0);
-                        weather.setImage(Utils.downloadWeatherIcon(weather.getIcon()));
+//                        weather.setImage(Utils.downloadWeatherIcon(weather.getIcon()));
                     }
 
                     return weatherWrapper;

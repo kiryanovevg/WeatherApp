@@ -1,32 +1,18 @@
 package com.kiryanov.weatherapp.models.minInfo;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-import android.support.annotation.NonNull;
-
-import com.kiryanov.weatherapp.utils.WeatherConverter;
-
 import java.util.List;
 
 /**
  * Created by Evgeniy on 22.09.18.
  */
-@Entity
 public class City {
 
-    @NonNull
-    @PrimaryKey
     private String name;
 
-    @Embedded
     private Coordinate coord;
 
-    @TypeConverters({WeatherConverter.class})
     private List<Weather> weather;
 
-    @Embedded
     private Temperature main;
 
     private long dt;

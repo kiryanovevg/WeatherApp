@@ -26,11 +26,12 @@
             android:padding="12dp"
             >
 
+            <!--app:weather_icon="@{item.weather.get(0).image}"-->
             <ImageView
                 android:id="@+id/icon"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                app:weather_icon="@{item.weather.get(0).image}"
+                app:weather_icon_url="@{item.weather.get(0).icon}"
                 />
 
             <TextView
